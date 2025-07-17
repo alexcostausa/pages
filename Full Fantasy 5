@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lottery 5‑Number Combinations (4,896)</title>
+<style>
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f9fafb;
+    margin:0;
+    padding:1rem;
+    /* center the shrinking table horizontally */
+    display:flex;
+    justify-content:center;
+  }
+  h1{
+    text-align:center;
+    width:100%;
+    margin:1rem 0;
+  }
+  /* Container now wraps the table size horizontally, but still scrolls vertically */
+  #container{
+    display:inline-block;     /* shrink‑wrap to table width */
+    max-height:80vh;
+    overflow:auto;            /* vertical & horizontal scroll if needed */
+    border:1px solid #cbd5e1;
+  }
+  table{
+    width:auto;               /* shrink to content width */
+    table-layout:auto;        /* natural column widths */
+    border-collapse:collapse;
+    font-size:0.85rem;
+  }
+  thead{
+    position:sticky;
+    top:0;
+    background:#ffffff;
+  }
+  th,td{
+    border:1px solid #e2e8f0;
+    padding:0.35rem 0.55rem;
+    text-align:left;
+    white-space:nowrap;
+  }
+  tbody tr:nth-child(odd){
+    background:#f1f5f9;
+  }
+</style>
+</head>
+<body>
+  <div>
+    <h1>Lottery 5‑Number Combinations (4,896)</h1>
+    <div id="container">
+      <table id="comboTable">
+        <thead>
+          <tr>
+            <th>Line</th>
+            <th>Combination</th>
+            <th>Tri&nbsp;Set</th>
+            <th>Six&nbsp;Set</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+<script>
+function pad(num,len){return String(num).padStart(len,'0');}
+const tbody=document.querySelector('#comboTable tbody');
+let line=1;
+for(let a=1;a<=18;a++){
+  for(let b=a+1;b<=18;b++){
+    for(let c=b+1;c<=18;c++){
+      const tri=[a,b,c];
+      const triStr=tri.map(n=>pad(n,2)).join('-');
+      const six=[2*a-1,2*a,2*b-1,2*b,2*c-1,2*c].sort((x,y)=>x-y);
+      const sixStr=six.map(n=>pad(n,2)).join('-');
+      for(let skip=0;skip<6;skip++){
+        const comb=six.filter((_,idx)=>idx!==skip);
+        const combStr=comb.map(n=>pad(n,2)).join('-')+' (0)';
+        const tr=document.createElement('tr');
+        [pad(line,4),combStr,triStr,sixStr].forEach(txt=>{
+          const td=document.createElement('td');
+          td.textContent=txt;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+        line++;
+      }
+    }
+  }
+}
+</script>
+</body>
+</html>
