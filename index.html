@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>All 11,629 Records of FF-ALL-08-24-25</title>
+    <style>
+      body {
+        font-family: "Arial Nova", Arial, sans-serif;
+        font-size: 14px;
+        margin: 20px;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: inherit;
+      }
+      h1 {
+        font-family: inherit;
+      }
+      .active {
+        color: red;
+        font-weight: bold;
+      }
+      /* Ensure clickable numbers have a pointer cursor */
+      .number {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>All 11,629 Records of FF-ALL-08-24-25</h1>
+    <pre id="fileContent">Loading file content...</pre>
+    <script>
+      // Function to process a line and wrap winning numbers in spans
+      function processLine(line) {
+        // Match lines that start with a 5-digit index followed by a period and space
+        // and then a string of winning numbers (assumed to be formatted as two-digit numbers separated by hyphens).
+        // Example line: 00001. 03-05-15-26-33
+        const match = line.match(/^(\\d{5}\.\s*)(.*)$/);
+        if (match) {
+          const prefix = match[1];
+          let numbersPart = match[2];
+          // Replace every occurrence of a two-digit number (with word boundaries) with a span wrapper.
+          // This regex will only match standalone two-digit numbers.
+          numbersPart = numbersPart.replace(/\\b(\\d{2})\\b/g, '<span class="number" data-num="$1">$1</span>');
+          return prefix + numbersPart;
+        }
+        // If line doesn't match expected format, return it unchanged
+        return line;
+      }
+
+      // Fetch the file content from GitHub
+      fetch("https://raw.githubusercontent.com/alexcostausa/pages/main/FF-ALL-08-24-25")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.text();
+        })
+        .then(text => {
+          // Split the text into lines, process each line, and join them back
+          const lines = text.split(/\\r?\\n/);
+          const processedLines = lines.map(line => processLine(line));
+          document.getElementById("fileContent").innerHTML = processedLines.join('\n');
+        })
+        .catch(error => {
+          document.getElementById("fileContent").textContent = "Error loading file content: " + error;
+        });
+
+      // Add a click event listener at the document level to handle clicks on numbers
+      document.addEventListener('click', function(event) {
+        // Check if the clicked element has the class 'number'
+        if (event.target && event.target.classList.contains('number')) {
+          const clickedNumber = event.target.getAttribute('data-num');
+          // Find all spans with the same data-num
+          const allMatches = document.querySelectorAll('.number[data-num="' + clickedNumber + '"]');
+          // Determine if the number is currently active by checking if the first match has the class active
+          const isActive = event.target.classList.contains('active');
+          allMatches.forEach(span => {
+            if (isActive) {
+              // If it is active, remove the class to toggle off
+              span.classList.remove('active');
+            } else {
+              // If it is not active, add the class
+              span.classList.add('active');
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
